@@ -9,3 +9,10 @@ CREATE TABLE categories(
 
 CREATE UNIQUE INDEX idx_categories_name_lower
 ON categories(lower(name));
+
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY
+
+CREATE POLICY categories_select_all
+ON categories
+FOR SELECT
+USING (true);
