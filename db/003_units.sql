@@ -4,24 +4,24 @@ CREATE TABLE units(
     name TEXT NOT NULL,
     dimension TEXT NOT NULL,
     factor_to_base NUMERIC NOT NULL,
-	sort_order INTEGER NOT NULL,
+    sort_order INTEGER NOT NULL,
 
-    CONSTRAINT ck_units_code_no_whitespace
+    CONSTRAINT ck_units_code_format
         CHECK(code = btrim(code) AND length(btrim(code)) > 0),
-    CONSTRAINT ck_units_name_no_whitespace
+    CONSTRAINT ck_units_name_format
         CHECK(name = btrim(name) AND length(btrim(name)) > 0),
     CONSTRAINT ck_units_dimension
         CHECK(dimension IN ('peso', 'volumen', 'cantidad', 'empaque')),
-    CONSTRAINT ck_units_factor_positive
+    CONSTRAINT ck_units_factor_to_base_valid
         CHECK(
-            factor_to_base > 0 
+            factor_to_base > 0
             AND (dimension <> 'empaque' OR factor_to_base = 1)),
-	CONSTRAINT ck_units_sort_order_positive
-		CHECK(sort_order > 0)
-);   
+    CONSTRAINT ck_units_sort_order_positive
+        CHECK(sort_order > 0)
+);
 
-CREATE UNIQUE INDEX idx_units_name_lower ON units(lower(name));
-CREATE UNIQUE INDEX idx_units_code_lower ON units(lower(code));
+CREATE UNIQUE INDEX uq_units_name ON units(lower(name));
+CREATE UNIQUE INDEX uq_units_code ON units(lower(code));
 
 ALTER TABLE units ENABLE ROW LEVEL SECURITY;
 
