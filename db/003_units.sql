@@ -4,6 +4,7 @@ CREATE TABLE units(
     name TEXT NOT NULL,
     dimension TEXT NOT NULL,
     factor_to_base NUMERIC NOT NULL,
+	sort_order INTEGER NOT NULL,
 
     CONSTRAINT ck_units_code_no_whitespace
         CHECK(code = btrim(code) AND length(btrim(code)) > 0),
@@ -14,7 +15,9 @@ CREATE TABLE units(
     CONSTRAINT ck_units_factor_positive
         CHECK(
             factor_to_base > 0 
-            AND (dimension <> 'empaque' OR factor_to_base = 1))
+            AND (dimension <> 'empaque' OR factor_to_base = 1)),
+	CONSTRAINT ck_units_sort_order_positive
+		CHECK(sort_order > 0)
 );   
 
 CREATE UNIQUE INDEX idx_units_name_lower ON units(lower(name));
