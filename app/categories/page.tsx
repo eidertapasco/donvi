@@ -1,12 +1,12 @@
-import { supabase } from '@/lib/supabase';
+import { createClient } from "@/lib/supabase/server";
 
-// Desactiva la navegación instantánea: esta página consulta datos sin <Suspense> 
-// se modificara de ser necesario en un futuro por el momento no porque los datos son minimos
 export const instant = false;
 
 export default async function CategoriesPage() {
 
-    const {data, error} = await supabase.from('categories').select('*').order('name', {ascending: true});
+    const supabaseClient = await createClient();
+
+    const {data, error} = await supabaseClient.from('categories').select('*').order('name', {ascending: true});
 
     if (error) {
         return (
