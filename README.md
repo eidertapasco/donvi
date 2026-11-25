@@ -6,11 +6,22 @@ Nació para reemplazar las cuentas en papel y en hojas de Excel, que son lentas 
 
 ## Estado
 
-En desarrollo. Módulo 1 (compras): la base de datos está lista y faltan el login y las pantallas. Módulo 2 (ventas): pendiente.
+En desarrollo. Módulo 1 (compras): la base de datos está lista y se preparó la integración de Supabase para el renderizado de servidor y el manejo de sesiones; el login y las pantallas del módulo siguen pendientes. Módulo 2 (ventas): pendiente.
 
 ## Stack
 
 Next.js, React, TypeScript, Tailwind CSS y PostgreSQL (alojado en Supabase).
+
+## Supabase en Next.js
+
+Se usa `@supabase/ssr` para trabajar con sesiones y cookies en el navegador y el servidor:
+
+- `lib/supabase/client.ts` crea el cliente de Supabase para el navegador.
+- `lib/supabase/server.ts` crea el cliente para páginas y componentes de servidor, usando las cookies de Next.js.
+- `lib/supabase/proxy.ts`, conectado desde `proxy.ts` en la raíz, verifica y renueva la sesión sincronizando las cookies de la solicitud y la respuesta.
+- Las páginas de servidor, como categorías, consultan Supabase con el cliente de servidor.
+
+Cuando no hay una sesión, el proxy redirige a `/login`. La ruta y el flujo de inicio de sesión todavía están pendientes.
 
 ## Cómo levantar el proyecto
 
