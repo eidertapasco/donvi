@@ -6,11 +6,11 @@ Nació para reemplazar las cuentas en papel y en hojas de Excel, que son lentas 
 
 ## Estado
 
-En desarrollo. Módulo 1 (compras): la base de datos está lista y se preparó la integración de Supabase para el renderizado de servidor y el manejo de sesiones; el login y las pantallas del módulo siguen pendientes. Módulo 2 (ventas): pendiente.
+En desarrollo. Módulo 1 (compras): la base de datos está lista y Supabase está integrado para consultas desde el servidor y manejo de sesiones. Ya existe el inicio de sesión y hay páginas iniciales para consultar categorías y unidades; el flujo y las pantallas de compras aún están en construcción. Módulo 2 (ventas): pendiente.
 
 ## Stack
 
-Next.js, React, TypeScript, Tailwind CSS y PostgreSQL (alojado en Supabase).
+Next.js, React, TypeScript, Tailwind CSS, Zod y PostgreSQL (alojado en Supabase).
 
 ## Supabase en Next.js
 
@@ -19,9 +19,10 @@ Se usa `@supabase/ssr` para trabajar con sesiones y cookies en el navegador y el
 - `lib/supabase/client.ts` crea el cliente de Supabase para el navegador.
 - `lib/supabase/server.ts` crea el cliente para páginas y componentes de servidor, usando las cookies de Next.js.
 - `lib/supabase/proxy.ts`, conectado desde `proxy.ts` en la raíz, verifica y renueva la sesión sincronizando las cookies de la solicitud y la respuesta.
-- Las páginas de servidor, como categorías, consultan Supabase con el cliente de servidor.
+- Las páginas de categorías y unidades consultan Supabase desde el servidor y se renderizan con datos de la solicitud actual.
+- `app/login/page.tsx` ofrece el formulario de inicio de sesión; `actions/auth.ts` valida los datos con Zod e inicia sesión con correo y contraseña mediante Supabase.
 
-Cuando no hay una sesión, el proxy redirige a `/login`. La ruta y el flujo de inicio de sesión todavía están pendientes.
+Cuando no hay una sesión, el proxy redirige a `/login`. El inicio de sesión está implementado; las pantallas y el flujo de gestión de compras siguen pendientes.
 
 ## Cómo levantar el proyecto
 
@@ -55,7 +56,7 @@ Nota: en Supabase hay que exponer las tablas a la API desde el panel. Eso no lo 
 - Cada línea de compra tiene su propia unidad, y la conversión se hace con la tabla `units`.
 - Las sentencias SQL van en mayúsculas para distinguir lo de PostgreSQL de los nombres propios.
 - Las restricciones siguen la convención `ck_tabla_columna_regla`, y los índices únicos `uq_`.
-- RLS activado y sin políticas hasta que exista el login, para que la clave pública no pueda leer ni escribir.
+- RLS está activado y las políticas de acceso están pendientes; tener una sesión no sustituye la definición de permisos para los datos.
 - Las llaves foráneas impiden borrar una compra con renglones o un insumo con compras, para proteger el historial.
 - La categoría vive en el insumo y no en la línea de compra, para que no pueda variar de una compra a otra.
 - El rendimiento promedio vive en supplies, y el real de una compra en actual_yield.
