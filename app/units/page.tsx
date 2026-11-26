@@ -1,10 +1,12 @@
-import { supabase } from "@/lib/supabase";
-
-export const instant = false;
+import { createClient } from "@/lib/supabase/server";
+import { connection } from "next/server";
 
 export default async function UnitsPage() {
 
-    const {data, error} = await supabase
+    await connection();
+
+    const supabaseClient = await createClient();
+    const {data, error} = await supabaseClient
     .from('units')
     .select('*')
     .order('sort_order', {ascending: true});
