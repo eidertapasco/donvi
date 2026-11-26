@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
-
-export const instant = false;
+import { connection } from "next/server";
 
 export default async function CategoriesPage() {
+
+    await connection();
 
     const supabaseClient = await createClient();
 
