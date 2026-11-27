@@ -1,43 +1,60 @@
-"use server"
+"use server";
 
-import { createClient } from '@/lib/supabase/server';
-import { redirect, RedirectType } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { z } from "zod";
+import { createClient } from "@/lib/supabase/server";
 
-const schema = z.object({
-    email: z
-        .email({ error: 'Correo inválido' }),
+export type ActionState = {
+    error?: string;
+    success?: boolean;
+} | null;
 
+const loginSchema = z.object({
+    email: z.email({ error: "Correo inválido" }),
     password: z
-        .string({ error: 'Contraseña inválida'})
-        .min(8, { error: 'La contraseña debe tener al menos 8 caracteres'})
+        .string({ error: "Contraseña inválida" })
+        .min(8, { error: "La contraseña debe tener al menos 8 caracteres" }),
 });
 
-export async function login(formData: FormData) {
+export async function login(
+    prevState: ActionState,
+    formData: FormData
+): Promise<ActionState> {
+    const validatedFields = loginSchema.safeParse({
+        email: formData.get("email"),
+        password: formData.get("password"),
+    });
 
-    
-    const validateFields = schema.safeParse({
-        email: formData.get('email'),
-        password: formData.get('password'),
-    })
-    
-    if (!validateFields.success) {
-        console.log('Error de validación:', validateFields.error.issues);
-        return;
+    if (!validatedFields.success) {
+        return { error: "Correo o contraseña incorrectos" };
     }
-    
+
     const supabaseClient = await createClient();
-    const {data, error} = await supabaseClient
-        .auth
-        .signInWithPassword({ email: validateFields.data.email, password: validateFields.data.password })
+    const { error } = await supabaseClient.auth.signInWithPassword({
+        email: validatedFields.data.email,
+        password: validatedFields.data.password,
+    });
 
     if (error) {
-        console.log(error.message);
+        return { error: "Correo o contraseña incorrectos" };
+    }
+
+    // Limpia la caché de rutas de Next.js para traer datos frescos con la nueva sesión
+    revalidatePath("/", "layout");
+    // ('/ruta', RedirectType.push | replace) para controlar el historial de navegación
+    redirect("/purchases");
+}
+
+export async function logout() {
+    const supabaseClient = await createClient();
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+        console.log("Error al cerrar sesión:", error.message);
         return;
     }
 
-    revalidatePath('/', 'layout'); // limpia la caché de rutas de Next.js para traer datos frescos con la nueva sesión
-    redirect('/purchases'); // ('/ruta', RedirectType.push | replace) para controlar el historial de navegación
-
+    revalidatePath("/", "layout");
+    redirect("/login");
 }
