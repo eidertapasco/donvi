@@ -1,8 +1,17 @@
 import { createClient } from "@/lib/supabase/server";
 import { connection } from "next/server";
 import { logout } from "@/actions/auth";
+import { Suspense } from "react";
 
 export default async function PurchasesPage() {
+    return (
+        <Suspense fallback={<p>Cargando Módulo: Compras...</p>}>
+            <PurchasesContent />
+        </Suspense>
+    );
+}
+
+async function PurchasesContent() {
     await connection();
 
     const supabaseClient = await createClient();

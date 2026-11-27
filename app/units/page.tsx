@@ -1,15 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
 import { connection } from "next/server";
+import { Suspense } from "react";
 
 export default async function UnitsPage() {
+    return (
+        <Suspense fallback={<p>Cargando Módulo: Unidades de Medida...</p>}>
+            <UnitsContent />
+        </Suspense>
+    );
+}
 
+async function UnitsContent() {
     await connection();
 
     const supabaseClient = await createClient();
-    const {data, error} = await supabaseClient
-    .from('units')
-    .select('*')
-    .order('sort_order', {ascending: true});
+    const { data, error } = await supabaseClient
+        .from("units")
+        .select("*")
+        .order("sort_order", { ascending: true });
 
     if (error) {
         return (
@@ -35,7 +43,7 @@ export default async function UnitsPage() {
             <h1>Unidades de Medida</h1>
             <ol>
                 {data.map((unit) => {
-                    return <li key={unit.id}>{unit.code}</li>
+                    return <li key={unit.id}>{unit.code}</li>;
                 })}
             </ol>
         </div>

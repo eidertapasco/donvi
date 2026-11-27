@@ -1,13 +1,24 @@
 import { createClient } from "@/lib/supabase/server";
 import { connection } from "next/server";
+import { Suspense } from "react";
 
-export default async function CategoriesPage() {
+export default function CategoriesPage() {
+    return (
+        <Suspense fallback={<p>Cargando categorías...</p>}>
+            <CategoriesContent />
+        </Suspense>
+    );
+}
 
+async function CategoriesContent() {
     await connection();
 
     const supabaseClient = await createClient();
 
-    const {data, error} = await supabaseClient.from('categories').select('*').order('name', {ascending: true});
+    const { data, error } = await supabaseClient
+        .from("categories")
+        .select("*")
+        .order("name", { ascending: true });
 
     if (error) {
         return (
@@ -33,9 +44,9 @@ export default async function CategoriesPage() {
             <h1>Categorías</h1>
             <ol>
                 {data.map((category) => {
-                    return <li key={category.id}>{category.name}</li>
+                    return <li key={category.id}>{category.name}</li>;
                 })}
             </ol>
         </div>
     );
-}   
+}
