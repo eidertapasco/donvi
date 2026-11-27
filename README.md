@@ -4,6 +4,10 @@ Donvi es un sistema de gestión para un negocio de comidas rápidas fundado en P
 
 Nació para reemplazar las cuentas en papel y en hojas de Excel, que son lentas y propensas a errores. Su objetivo es registrar las compras de insumos, calcular costos de producción y, más adelante, registrar ventas y analizar la rentabilidad de cada producto.
 
+## Aplicación
+
+La versión inicial está desplegada y disponible en [donvi.vercel.app](https://donvi.vercel.app). El proyecto continúa en desarrollo.
+
 ## Estado
 
 En desarrollo. Módulo 1 (compras): el esquema para categorías, unidades, insumos, compras y renglones de compra está definido, y Supabase está integrado para consultas y manejo de sesiones. El inicio de sesión mediante correo y contraseña y el cierre de sesión están implementados. También hay consultas iniciales de categorías y unidades, y una pantalla de compras que muestra el usuario autenticado; todavía no permite registrar compras desde la aplicación. Módulo 2 (ventas): pendiente.
