@@ -10,7 +10,7 @@ La versión inicial está desplegada y disponible en [donvi.vercel.app](https://
 
 ## Estado
 
-En desarrollo. Módulo 1 (compras): el esquema para categorías, unidades, insumos, compras y renglones de compra está definido, y Supabase está integrado para consultas y manejo de sesiones. El inicio de sesión mediante correo y contraseña y el cierre de sesión están implementados. También hay consultas iniciales de categorías y unidades, y una pantalla de compras que muestra el usuario autenticado; todavía no permite registrar compras desde la aplicación. Módulo 2 (ventas): pendiente.
+En desarrollo. Módulo 1 (compras): el esquema para categorías, unidades, insumos, compras y renglones de compra está definido, y Supabase está integrado para consultas y manejo de sesiones. El inicio y cierre de sesión mediante correo y contraseña están implementados, y las políticas RLS de `008_policies.sql` están aplicadas en las bases local y Supabase. También hay consultas iniciales de categorías y unidades, y una pantalla de compras que muestra el usuario autenticado; todavía no permite registrar compras desde la aplicación. Módulo 2 (ventas): pendiente.
 
 ## Stack
 
@@ -58,6 +58,7 @@ Nota: en Supabase hay que exponer las tablas a la API desde el panel. Eso no lo 
 | 005_supplies | ✅ | ✅ |
 | 006_purchases | ✅ | ✅ |
 | 007_purchase_items | ✅ | ✅ |
+| 008_policies | ✅ | ✅ |
 
 ## Decisiones de diseño
 
