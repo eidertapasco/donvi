@@ -6,11 +6,13 @@ Nació para reemplazar las cuentas en papel y en hojas de Excel, que son lentas 
 
 ## Estado
 
-En desarrollo. Módulo 1 (compras): la base de datos está lista y Supabase está integrado para consultas desde el servidor y manejo de sesiones. Ya existe el inicio de sesión y hay páginas iniciales para consultar categorías y unidades; el flujo y las pantallas de compras aún están en construcción. Módulo 2 (ventas): pendiente.
+En desarrollo. Módulo 1 (compras): el esquema para categorías, unidades, insumos, compras y renglones de compra está definido, y Supabase está integrado para consultas y manejo de sesiones. El inicio de sesión mediante correo y contraseña y el cierre de sesión están implementados. También hay consultas iniciales de categorías y unidades, y una pantalla de compras que muestra el usuario autenticado; todavía no permite registrar compras desde la aplicación. Módulo 2 (ventas): pendiente.
 
 ## Stack
 
 Next.js, React, TypeScript, Tailwind CSS, Zod y PostgreSQL (alojado en Supabase).
+
+Para el formato del código se usa Prettier con plugins para ordenar imports y clases de Tailwind CSS.
 
 ## Supabase en Next.js
 
@@ -20,9 +22,11 @@ Se usa `@supabase/ssr` para trabajar con sesiones y cookies en el navegador y el
 - `lib/supabase/server.ts` crea el cliente para páginas y componentes de servidor, usando las cookies de Next.js.
 - `lib/supabase/proxy.ts`, conectado desde `proxy.ts` en la raíz, verifica y renueva la sesión sincronizando las cookies de la solicitud y la respuesta.
 - Las páginas de categorías y unidades consultan Supabase desde el servidor y se renderizan con datos de la solicitud actual.
-- `app/login/page.tsx` ofrece el formulario de inicio de sesión; `actions/auth.ts` valida los datos con Zod e inicia sesión con correo y contraseña mediante Supabase.
+- `app/login/page.tsx` ofrece el formulario de inicio de sesión y muestra errores y estado de carga. `actions/auth.ts` valida los datos con Zod, inicia sesión con correo y contraseña mediante Supabase y permite cerrar la sesión.
+- Al iniciar sesión, se renueva la caché de rutas y se redirige a `/purchases`; al cerrar sesión, se redirige a `/login`.
+- `app/purchases/page.tsx` muestra el correo del usuario autenticado y la opción para cerrar sesión. El registro de compras aún es un espacio reservado.
 
-Cuando no hay una sesión, el proxy redirige a `/login`. El inicio de sesión está implementado; las pantallas y el flujo de gestión de compras siguen pendientes.
+Cuando no hay una sesión, el proxy redirige a `/login`.
 
 ## Cómo levantar el proyecto
 
@@ -38,6 +42,8 @@ Cuando no hay una sesión, el proxy redirige a `/login`. El inicio de sesión es
 La base es PostgreSQL en Supabase, para que sea accesible desde cualquier dispositivo. Se construyó a mano con archivos SQL en `db/`, que se ejecutan en orden numérico. Cada base (local y Supabase) se actualiza manualmente.
 
 Nota: en Supabase hay que exponer las tablas a la API desde el panel. Eso no lo recrean los archivos.
+
+`db/008_policies.sql` define políticas RLS para la lectura de categorías y unidades, y para la lectura, inserción y actualización de insumos y compras. Para los renglones de compra también permite el borrado. Como las bases se actualizan manualmente, hay que ejecutar este script en cada entorno para aplicar las políticas.
 
 | Archivo | Local | Supabase |
 |---|---|---|
@@ -56,7 +62,7 @@ Nota: en Supabase hay que exponer las tablas a la API desde el panel. Eso no lo 
 - Cada línea de compra tiene su propia unidad, y la conversión se hace con la tabla `units`.
 - Las sentencias SQL van en mayúsculas para distinguir lo de PostgreSQL de los nombres propios.
 - Las restricciones siguen la convención `ck_tabla_columna_regla`, y los índices únicos `uq_`.
-- RLS está activado y las políticas de acceso están pendientes; tener una sesión no sustituye la definición de permisos para los datos.
+- RLS está activado. Las políticas de `008_policies.sql` permiten el acceso a cualquier usuario autenticado, pero todavía no aíslan los datos por usuario.
 - Las llaves foráneas impiden borrar una compra con renglones o un insumo con compras, para proteger el historial.
 - La categoría vive en el insumo y no en la línea de compra, para que no pueda variar de una compra a otra.
 - El rendimiento promedio vive en supplies, y el real de una compra en actual_yield.
